@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu Utama</title>
+    <!-- Muatkan font 'Exo 2' dari Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@700&display=swap" rel="stylesheet">
+    
     <!-- Menggunakan Tailwind CSS untuk gaya asas -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -56,21 +61,23 @@
             position: relative;
             z-index: 3;
             text-align: center;
+            display: flex;
+            flex-direction: column; /* Mengatur susunan elemen secara vertikal */
+            align-items: center;
         }
 
         /* Gaya untuk tajuk "Game Kencan" */
         #gameTitle {
+            font-family: 'Exo 2', sans-serif;
             font-size: 2rem;
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            /* Menggunakan margin untuk mengatur posisi */
-            margin-top: 5rem; /* Jarak dari bawah, diubah menjadi 1.5rem */
-            margin-top: 0; /* Menghilangkan margin atas standar */
+            margin-bottom: 0.5rem;
             letter-spacing: 0.1em;
         }
 
-        /* Gaya untuk butang "Mulai" */
-        #startButton {
+        /* Gaya untuk butang */
+        .menu-button {
             background-color: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.5);
@@ -81,16 +88,84 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 0.5rem; /* Menambahkan sedikit jarak dari tombol di atasnya */
         }
-
-        #startButton:hover {
+        
+        /* Mengatur jarak khusus untuk tombol "Mulai" */
+        #startButton {
+            margin-top: 0;
+        }
+        
+        .menu-button:hover {
             background-color: rgba(255, 255, 255, 0.4);
-            transform: translateY(20px); /* Kesan sedikit naik apabila di-hover */
+            transform: translateY(-2px); /* Kesan sedikit naik apabila di-hover */
         }
 
-        #startButton:active {
+        .menu-button:active {
             transform: translateY(0); /* Kembali ke posisi asal apabila diklik */
         }
+
+        /* Gaya untuk latar belakang pop-up */
+        .popup-bg {
+            display: none; /* Sembunyikan secara lalai */
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7); /* Latar belakang yang lebih gelap */
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Gaya untuk kotak pop-up */
+        .popup-content {
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: #ffffff;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            text-align: left;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        /* Gaya untuk butang tutup pop-up */
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #ff6347; /* Warna merah tomato apabila di-hover */
+        }
+        
+        /* Gaya untuk tajuk pop-up */
+        .popup-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        /* Animasi pudar masuk */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
     </style>
 </head>
 <body class="bg-gray-900">
@@ -108,12 +183,26 @@
         <!-- Tulisan "Game Kencan" -->
         <h1 id="gameTitle">Game Kencan</h1>
         <!-- Butang "Mulai" -->
-        <button id="startButton">Mulai</button>
+        <button id="startButton" class="menu-button">Mulai</button>
+        <!-- Butang "Pembaruan" -->
+        <button id="updateButton" class="menu-button">Pembaruan</button>
+    </div>
+    
+    <!-- Struktur Pop-up -->
+    <div id="updatePopup" class="popup-bg">
+        <div class="popup-content">
+            <span class="close-btn">&times;</span>
+            <div class="popup-title">Pembaruan</div>
+            <p>v1.0</p>
+            <ul>
+                <li>1. game baru belum ada fitur.</li>
+            </ul>
+        </div>
     </div>
 
     <script>
         // Senarai fail imej untuk slaid
-        const images = ['b0304c60f07d626ebd605d30b6fe42786cbd3d14/ka.jpg', 'ma.jpg', 'ra.jpg', 'ta.jpg'];
+        const images = ['wa.jpg', 'ka.jpg', 'ma.jpg', 'ra.jpg', 'ta.jpg'];
         let currentImageIndex = 0;
 
         // Dapatkan rujukan kepada elemen latar belakang
@@ -121,6 +210,11 @@
         const bg2 = document.getElementById('bg2');
         let activeBg = bg1;
         let inactiveBg = bg2;
+
+        // Dapatkan rujukan kepada pop-up dan butang
+        const updateButton = document.getElementById('updateButton');
+        const updatePopup = document.getElementById('updatePopup');
+        const closeBtn = document.querySelector('.close-btn');
 
         // Tetapkan imej latar belakang awal
         activeBg.style.backgroundImage = `url(${images[currentImageIndex]})`;
@@ -148,9 +242,21 @@
         // Anda boleh ubah nilai 5000 (dalam milisaat) untuk menyesuaikan kelajuan
         setInterval(changeBackground, 5000);
 
-        // Fungsi untuk butang
-        document.getElementById('startButton').addEventListener('click', () => {
-            // Letakkan kod anda di sini untuk memulakan permainan atau aplikasi
+        // Fungsi untuk butang "Pembaruan"
+        updateButton.addEventListener('click', () => {
+            updatePopup.style.display = 'flex'; // Paparkan pop-up
+        });
+
+        // Fungsi untuk butang tutup pop-up
+        closeBtn.addEventListener('click', () => {
+            updatePopup.style.display = 'none'; // Sembunyikan pop-up
+        });
+        
+        // Sembunyikan pop-up jika pengguna mengklik di luar kotak
+        window.addEventListener('click', (event) => {
+            if (event.target == updatePopup) {
+                updatePopup.style.display = 'none';
+            }
         });
     </script>
 
